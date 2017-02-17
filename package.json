@@ -2,9 +2,19 @@
   "name": "discourse-facebook-post",
   "version": "0.1.0",
   "description": "Discourse posts are posted to Facebook.",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
+    "build": "babel src --presets babel-preset-es2015 --out-dir lib",
+    "prestart": "npm run build",
+    "dev": "npm run build && pm2 start ./pm2.json --no-daemon logs",
+    "start": "pm2 start ./pm2.json",
+    "start-docker": "pm2 start ./pm2.json --no-daemon logs",
+    "restart": "pm2 restart ./pm2.json",
+    "stop": "pm2 stop ./pm2.json",
     "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "engines": {
+    "node": ">=6.9.0"
   },
   "repository": {
     "type": "git",
@@ -17,6 +27,11 @@
   },
   "homepage": "https://github.com/gimdongwoo/discourse-facebook-post#readme",
   "dependencies": {
-    "fb": "^1.1.1"
+    "nodemailer": "^3.1.1",
+    "request": "^2.79.0"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.23.0",
+    "babel-preset-es2015": "^6.22.0"
   }
 }
