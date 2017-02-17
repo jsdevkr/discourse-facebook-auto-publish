@@ -1,0 +1,22 @@
+{
+  "name": "discourse-facebook-post",
+  "version": "0.1.0",
+  "description": "Discourse posts are posted to Facebook.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gimdongwoo/discourse-facebook-post.git"
+  },
+  "author": "Dongwoo Gim <gimdongwoo@gmail.com> (https://github.com/gimdongwoo)",
+  "license": "Apache-2.0",
+  "bugs": {
+    "url": "https://github.com/gimdongwoo/discourse-facebook-post/issues"
+  },
+  "homepage": "https://github.com/gimdongwoo/discourse-facebook-post#readme",
+  "dependencies": {
+    "fb": "^1.1.1"
+  }
+}
