@@ -1,4 +1,4 @@
-import Nodemailer from 'Nodemailer';
+import nodemailer from 'nodemailer';
 import RestClient from './restClient';
 
 let checkDate = new Date();
@@ -63,7 +63,7 @@ function parseTopics(topics, users) {
 function emailSender(_subject, _html) {
   return new Promise((resolve, reject) => {
     // create reusable transporter object using the default SMTP transport
-    let transport = Nodemailer.createTransport({
+    let transport = nodemailer.createTransport({
       service: 'Gmail',
       auth: {
         user: process.env.GMAIL_ID,

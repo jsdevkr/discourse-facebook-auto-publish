@@ -119,7 +119,7 @@ function restCall(method, url, data, _headers, formData) {
 * @param (Object) headers
 * @param (Object) formData
 */
-export default class restClient {
+export default class RestClient {
   constructor() {
     methods.forEach((method) => {
       this[method] = (url, data, headers, formData) => {
