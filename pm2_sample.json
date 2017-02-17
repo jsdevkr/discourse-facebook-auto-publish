@@ -9,7 +9,9 @@
         "GMAIL_ID": "gimdongwoo@gmail.com",
         "GMAIL_PW": "",
         "EMAIL_FROM": "JSDEV.KR <jsdevkr@gmail.com>",
-        "EMAIL_TO": "jsdev.kr@groups.facebook.com"
+        "EMAIL_TO": "jsdev.kr@groups.facebook.com",
+        "POLLING_INTERVAL_SEC": 60,
+        "POSTED_AFTER_MIN": 5
       }
     }
   ]
