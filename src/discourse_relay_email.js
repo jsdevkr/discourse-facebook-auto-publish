@@ -42,9 +42,16 @@ function parseTopics(topics, users) {
     // subject
     const _subject = info.title;
     // find post user
-    const _posters = info.posters.find((poster) => {
-      return !poster.extras;
-    });
+    let _posters = null;
+    if (info.posters.length === 1) {
+      _posters = info.posters[0];
+    } else {
+      _posters = info.posters.find((poster) => {
+        return poster.description.indexOf('원본 게시자') > -1;
+      });
+    }
+    if (!_posters) _posters = info.posters[0];
+    // users serach
     const _postUser = users.find((user) => {
       return user.id === _posters.user_id;
     });
