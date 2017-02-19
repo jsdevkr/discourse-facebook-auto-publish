@@ -8,7 +8,7 @@ let lastPostDate = checkDate;
 function getDiscourse() {
   return new Promise((resolve, reject) => {
     const restClient = new RestClient();
-    restClient.get(process.env.DISCOURSE_URL + '/top/daily.json').then((results) => {
+    restClient.get(process.env.DISCOURSE_URL + '/latest.json').then((results) => {
       if (results && typeof results !== 'object') results = JSON.parse(results);
 
       if (results && results.topic_list && results.topic_list.topics) {
