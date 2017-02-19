@@ -8,7 +8,7 @@ let lastPostDate = checkDate;
 function getDiscourse() {
   return new Promise((resolve, reject) => {
     const restClient = new RestClient();
-    restClient.get(process.env.DISCOURSE_URL + '/latest.json').then((results) => {
+    restClient.get(process.env.DISCOURSE_URL + '/top/daily.json').then((results) => {
       if (results && typeof results !== 'object') results = JSON.parse(results);
 
       if (results && results.topic_list && results.topic_list.topics) {
@@ -22,7 +22,7 @@ function getDiscourse() {
 
 // parse topics
 function parseTopics(topics, users) {
-  const postedOverMin = process.env.POSTED_AFTER_MIN * 5;
+  const postedOverMin = process.env.POSTED_AFTER_MIN * 1;
 
   // important - filtering
   const filteredTopics = topics.filter((info) => {
