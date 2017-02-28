@@ -5,6 +5,7 @@
       "script": "./lib/index.js",
       "exec_mode"  : "fork",
       "env": {
+        "NODE_ENV": "production",
         "DISCOURSE_URL": "https://jsdev.kr",
         "GMAIL_ID": "gimdongwoo@gmail.com",
         "GMAIL_PW": "",

@@ -2,6 +2,9 @@ import nodemailer from 'nodemailer';
 import RestClient from './restClient';
 
 let checkDate = new Date();
+// for developemnt
+if (process.env.NODE_ENV !== 'production') checkDate = checkDate.setHours(-24);
+
 let lastPostDate = checkDate;
 
 // get discourse topics
@@ -14,9 +17,26 @@ function getDiscourse() {
       if (results && results.topic_list && results.topic_list.topics) {
         return parseTopics(results.topic_list.topics, results.users).then(resolve, reject);
       }
-      console.error('load error, checkDate not update');
-      return reject(error);
-    });
+      console.error('latest.json scheme error');
+      return reject('latest.json scheme error');
+    }, reject);
+  });
+}
+
+// get discourse cagegory
+function getCategories(categoryId) {
+  return new Promise((resolve, reject) => {
+    const restClient = new RestClient();
+    restClient.get(process.env.DISCOURSE_URL + '/categories.json').then((results) => {
+      if (results && typeof results !== 'object') results = JSON.parse(results);
+
+      if (results && results.category_list && results.category_list.categories) {
+        const findCategory = results.category_list.categories.find((category) => { return category.id === categoryId; });
+        return resolve(findCategory);
+      }
+      console.error('categories.json scheme error');
+      return reject('categories.json scheme error');
+    }, reject);
   });
 }
 
@@ -59,7 +79,11 @@ function parseTopics(topics, users) {
     const _html = 'by @' + _postUser.username + '<br/>' + process.env.DISCOURSE_URL + '/t/' + info.id;
 
     const fn = function () {
-      return emailSender(_subject, _html);
+      // get category
+      return getCategories(info.category_id).then((categoryInfo) => {
+        const _subjectNew = '[' + categoryInfo.name + '] ' + _subject;
+        return emailSender(_subjectNew, _html);
+      });
     };
 
     return pacc = pacc.then(fn);
@@ -87,6 +111,9 @@ function emailSender(_subject, _html) {
     };
 
     console.log('mailOptions', mailOptions);
+
+    // for developemnt
+    if (process.env.NODE_ENV !== 'production') return resolve();
 
     // send mail with defined transport object
     transport.sendMail(mailOptions, function(error, info){
