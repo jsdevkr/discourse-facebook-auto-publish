@@ -76,7 +76,7 @@ function parseTopics(topics, users) {
       return user.id === _posters.user_id;
     });
     // body
-    const _html = 'by @' + _postUser.username + '<br/>' + process.env.DISCOURSE_URL + '/t/' + info.id;
+    const _html = 'by @' + _postUser.username + '<br/>' + process.env.DISCOURSE_URL + '/t/' info.slug + '/' + info.id;
 
     const fn = function () {
       // get category
