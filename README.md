@@ -42,11 +42,11 @@ $ npm stop
       "exec_mode"  : "fork",
       "env": {
         "NODE_ENV": "production",
-        "DISCOURSE_URL": "https://jsdev.kr",
-        "GMAIL_ID": "jsdevkr@gmail.com",
+        "DISCOURSE_URL": "https://_____.com",
+        "GMAIL_ID": "_____@gmail.com",
         "GMAIL_PW": "_________",
-        "EMAIL_FROM": "JSDEV.KR <jsdevkr@gmail.com>",
-        "EMAIL_TO": "jsdev.kr@groups.facebook.com",
+        "EMAIL_FROM": "JSDEV.KR <_____@gmail.com>",
+        "EMAIL_TO": "________@groups.facebook.com",
         "POLLING_INTERVAL_SEC": 60,
         "POSTED_AFTER_MIN": 5
       }
