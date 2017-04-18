@@ -27,11 +27,11 @@ function getDiscourse() {
 function getCategories(categoryId) {
   return new Promise((resolve, reject) => {
     const restClient = new RestClient();
-    restClient.get(process.env.DISCOURSE_URL + '/categories.json').then((results) => {
+    restClient.get(process.env.DISCOURSE_URL + '/site.json').then((results) => {
       if (results && typeof results !== 'object') results = JSON.parse(results);
 
-      if (results && results.category_list && results.category_list.categories) {
-        const findCategory = results.category_list.categories.find((category) => { return category.id === categoryId; });
+      if (results && results.categories) {
+        const findCategory = results.categories.find((category) => { return category.id === categoryId; });
         return resolve(findCategory);
       }
       console.error('categories.json scheme error');
