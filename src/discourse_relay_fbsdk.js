@@ -1,4 +1,4 @@
-import nodemailer from 'nodemailer';
+import FB from 'fb';
 import RestClient from './restClient';
 
 let checkDate = new Date();
@@ -24,40 +24,25 @@ function getCategories(categoryId) {
   });
 }
 
-// email send
-function emailSender(_subject, _html) {
+// facebook post
+function fbPostGroup(text, link) {
   return new Promise((resolve, reject) => {
-    // create reusable transporter object using the default SMTP transport
-    const transport = nodemailer.createTransport({
-      service: 'Gmail',
-      auth: {
-        user: process.env.GMAIL_ID,
-        pass: process.env.GMAIL_PW
+    FB.options({ version: 'v2.9' });
+    FB.setAccessToken('access_token');
+    FB.api(
+      '/{group-id}/feed',
+      'POST',
+      {
+        message: 'This is a test message',
+        link
+      },
+      function (response) {
+        if (response && !response.error) {
+          return resolve(response);
+        }
+        return reject(response.error);
       }
-    });
-
-    // setup email data with unicode symbols
-    const mailOptions = {
-      from: process.env.EMAIL_FROM,
-      to: process.env.EMAIL_TO,
-      subject: _subject,
-      html: _html
-    };
-
-    console.log('mailOptions', mailOptions);
-
-    // for developemnt
-    if (process.env.NODE_ENV !== 'production') return resolve();
-
-    // send mail with defined transport object
-    transport.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.error(error);
-        return reject(error);
-      }
-      console.log('Message %s sent: %s', info.messageId, info.response);
-      return resolve();
-    });
+    );
   });
 }
 
@@ -99,11 +84,12 @@ function parseTopics(topics, users) {
         const _postUser = users.find((user) => {
           return user.id === _posters.user_id;
         });
-        // body
-        const _subjectNew = '[' + categoryInfo.name + '] ' + _subject;
-        const _html = 'by @' + _postUser.username + '<br/>' + process.env.DISCOURSE_URL + '/t/' + info.slug + '/' + info.id;
 
-        return emailSender(_subjectNew, _html);
+        // body
+        const text = '[' + categoryInfo.name + '] ' + _subject + '\n\nby @' + _postUser.username;
+        const link = process.env.DISCOURSE_URL + '/t/' + info.slug + '/' + info.id;
+
+        return fbPostGroup(text, link);
       });
     };
 
