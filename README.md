@@ -5,8 +5,6 @@ Discourse Facebook post
 
 A specially developed daemon to post discourse articles to the facebook group.
 
-The api endpoint does not exist for publishing facebook group. So we use the emails of people who are in the group and the email address of the group itself.
-
 
 ## Usage
 
@@ -17,6 +15,7 @@ $ npm insatll
 ```
 
 - Start daemon
+	- It has a pre-process to get the Facebook token.
 
 ```console
 $ npm start
@@ -31,44 +30,34 @@ $ npm stop
 
 ## Configuration
 
-- need to copy pm2_sample.json to pm2.json
+- You need the Facebook app.
+	- [https://developers.facebook.com/apps/](https://developers.facebook.com/apps/)
+
+- need to copy `.env_sample` to `.env` and change it.
 
 ```javascript
-{
-  "apps" : [
-    {
-      "name": "discourse-facebook-post",
-      "script": "./lib/index.js",
-      "exec_mode"  : "fork",
-      "env": {
-        "NODE_ENV": "production",
-        "DISCOURSE_URL": "https://_____.com",
-        "GMAIL_ID": "_____@gmail.com",
-        "GMAIL_PW": "_________",
-        "EMAIL_FROM": "JSDEV.KR <_____@gmail.com>",
-        "EMAIL_TO": "________@groups.facebook.com",
-        "POLLING_INTERVAL_SEC": 60,
-        "POSTED_AFTER_MIN": 5
-      }
-    }
-  ]
-}
+DISCOURSE_URL=https://jsdev.kr
+FACEBOOK_APP_ID=
+FACEBOOK_SECRET=
+FACEBOOK_GROUP_ID=
+POLLING_INTERVAL_SEC=60
+POSTED_AFTER_MIN=5
 ```
 
-** It is recommended that you use your facebook user's gmail.com account.
-
-** If you use your gmail.com account, need to allowing less secure apps to access your account. [Google Answer Link](https://support.google.com/accounts/answer/6010255)
+- `DISCOURSE_URL` should not end with `/`.
+- To find `FACEBOOK_GROUP_ID`, run `/me/groups` in the graph API explorer.
+	- [https://developers.facebook.com/tools/explorer](https://developers.facebook.com/tools/explorer)
 
 
 ## To do
 
-* Post to other facebook groups by category.
-* Posting the same post to multiple groups.
+- Post to other facebook groups by category.
+- Posting the same post to multiple groups.
 
 
 ## Caution
 
-* Facebook can block or audit your account.
+- Facebook can block or audit your account.
 
 
 ## License

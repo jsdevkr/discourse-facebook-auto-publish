@@ -1,5 +1,4 @@
-// import { startDaemon as startDiscourseDaemon } from './discourse_relay_email.js';
-import { startDaemon as startDiscourseDaemon } from './discourse_relay_fbsdk.js';
+import { startDaemon as startDaemonFacebook } from './discourseToFacebook.js';
 
-// start facebook poster
-startDiscourseDaemon();
+// start
+startDaemonFacebook();

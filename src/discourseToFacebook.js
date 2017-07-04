@@ -1,5 +1,8 @@
 import FB from 'fb';
+import env from '../.env.js'; // eslint-disable-line
 import RestClient from './restClient';
+
+console.log('NODE_ENV', process.env.NODE_ENV);
 
 let checkDate = new Date();
 // for developemnt
@@ -25,15 +28,15 @@ function getCategories(categoryId) {
 }
 
 // facebook post
-function fbPostGroup(text, link) {
+function fbPostGroup(message, link) {
   return new Promise((resolve, reject) => {
     FB.options({ version: 'v2.9' });
-    FB.setAccessToken('access_token');
+    FB.setAccessToken(process.env.FACEBOOK_ACCESS_TOKEN);
     FB.api(
-      '/{group-id}/feed',
+      '/' + process.env.FACEBOOK_GROUP_ID + '/feed',
       'POST',
       {
-        message: 'This is a test message',
+        message,
         link
       },
       function (response) {
@@ -86,10 +89,10 @@ function parseTopics(topics, users) {
         });
 
         // body
-        const text = '[' + categoryInfo.name + '] ' + _subject + '\n\nby @' + _postUser.username;
+        const message = '[' + categoryInfo.name + '] ' + _subject + '\n\nby @' + _postUser.username;
         const link = process.env.DISCOURSE_URL + '/t/' + info.slug + '/' + info.id;
 
-        return fbPostGroup(text, link);
+        return fbPostGroup(message, link);
       });
     };
 

@@ -37,5 +37,6 @@ jspm_packages
 # Optional REPL history
 .node_repl_history
 
-# pm2
-pm2.json
+# Environment
+.env
+.env.js
