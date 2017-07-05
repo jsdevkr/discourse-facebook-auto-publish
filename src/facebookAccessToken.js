@@ -4,11 +4,11 @@ import FB from 'fb';
 
 function readlineAccessToken() {
   return new Promise(function (resolve) {
-    console.log('************************************************************************************************');
-    console.log('Open this url and get accessToken : https://developers.facebook.com/tools/explorer/' + process.env.FACEBOOK_APP_ID);
-    console.log('*** Attention *** Type  : User Access Token');
-    console.log('*** Attention *** Scope : publish_actions, user_managed_groups');
-    console.log('************************************************************************************************');
+    console.log('***************************************************************************************************************');
+    console.log('  Open this url and get accessToken : https://developers.facebook.com/tools/explorer/' + process.env.FACEBOOK_APP_ID);
+    console.log('  *** Attention *** Type  : User Access Token');
+    console.log('  *** Attention *** Scope : publish_actions, user_managed_groups');
+    console.log('***************************************************************************************************************');
 
     const r = readline.createInterface({ input: process.stdin, output: process.stdout });
     r.question('What is accessToken? >> ', function (accessToken) {
