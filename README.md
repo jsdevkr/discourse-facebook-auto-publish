@@ -1,9 +1,9 @@
-Discourse Facebook post
-=======================
+discourse-facebook-auto-publish
+===
 
 ## Notes
 
-A specially developed daemon to post discourse articles to the facebook group.
+A specially developed daemon for publish discourse articles to the facebook group.
 
 
 ## Usage
