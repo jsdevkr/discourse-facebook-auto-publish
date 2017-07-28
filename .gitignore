@@ -40,3 +40,5 @@ jspm_packages
 # Environment
 .env
 .env.js
+
+.idea
