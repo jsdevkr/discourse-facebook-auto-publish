@@ -32,6 +32,7 @@ $ npm stop
 
 - You need the Facebook app.
 	- [https://developers.facebook.com/apps/](https://developers.facebook.com/apps/)
+	- This app will only be used by you, so you can use it while under `development` status.
 
 - need to copy `.env_sample` to `.env` and change it.
 

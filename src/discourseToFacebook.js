@@ -1,6 +1,7 @@
 import FB from 'fb';
 import env from '../.env.js'; // eslint-disable-line
 import RestClient from './restClient';
+import { fbExchangeAccessToken, writeTokenToFile } from './accessTokenUtils';
 
 console.log('NODE_ENV', process.env.NODE_ENV);
 
@@ -30,23 +31,29 @@ function getCategories(categoryId) {
 // facebook post
 function fbPostGroup(message, link) {
   return new Promise((resolve, reject) => {
-    FB.options({ version: 'v3.0' });
-    FB.setAccessToken(process.env.FACEBOOK_ACCESS_TOKEN);
-    FB.api(
-      '/' + process.env.FACEBOOK_GROUP_ID + '/feed',
-      'POST',
-      {
-        message,
-        link
-      },
-      function (response) {
-        if (response && !response.error) {
-          return resolve(response);
+    fbExchangeAccessToken(process.env.FACEBOOK_ACCESS_TOKEN).then((accessToken) => {
+      process.env.FACEBOOK_ACCESS_TOKEN = accessToken;
+      writeTokenToFile(accessToken);
+
+      // publish
+      FB.options({ version: 'v3.0' });
+      FB.setAccessToken(accessToken);
+      FB.api(
+        '/' + process.env.FACEBOOK_GROUP_ID + '/feed',
+        'POST',
+        {
+          message,
+          link
+        },
+        function (response) {
+          if (response && !response.error) {
+            return resolve(response);
+          }
+          console.error('fb.api error', response.error);
+          return reject(response.error);
         }
-        console.error('fb.api error', response.error);
-        return reject(response.error);
-      }
-    );
+      );
+    }, reject);
   });
 }
 
