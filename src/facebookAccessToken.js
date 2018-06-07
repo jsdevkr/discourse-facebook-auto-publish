@@ -25,4 +25,8 @@ function getAccessToken() {
 }
 
 // start
-getAccessToken();
+if (process.env.FACEBOOK_ACCESS_TOKEN) {
+  writeTokenToFile(process.env.FACEBOOK_ACCESS_TOKEN);
+} else {
+  getAccessToken();
+}

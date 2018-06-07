@@ -50,6 +50,17 @@ POSTED_AFTER_MIN=5
 	- [https://developers.facebook.com/tools/explorer](https://developers.facebook.com/tools/explorer)
 
 
+## Running on Docker or Container Service
+
+- If you want running on `Docker` or `Heroku`, need to provide `process.env.FACEBOOK_ACCESS_TOKEN`
+	- To get `FACEBOOK_ACCESS_TOKEN`, open this url and get accessToken : https://developers.facebook.com/tools/explorer/{FACEBOOK_APP_ID}'
+	- Type  : `User Access Token`, Scope : `publish_to_groups`
+
+```console
+$ npm run start-docker
+```
+
+
 ## To do
 
 - Post to other facebook groups by category.
