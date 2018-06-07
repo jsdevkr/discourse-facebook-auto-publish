@@ -45,7 +45,7 @@ POSTED_AFTER_MIN=5
 ```
 
 - `DISCOURSE_URL` should not end with `/`.
-- To find `FACEBOOK_GROUP_ID`, run `/me/groups` in the graph API explorer.
+- To find `FACEBOOK_GROUP_ID`, run `/me` to get `user-id` and run `/{user-id}/groups` in the graph API explorer.
 	- [https://developers.facebook.com/tools/explorer](https://developers.facebook.com/tools/explorer)
 
 

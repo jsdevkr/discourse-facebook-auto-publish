@@ -7,7 +7,7 @@ function readlineAccessToken() {
     console.log('***************************************************************************************************************');
     console.log('  Open this url and get accessToken : https://developers.facebook.com/tools/explorer/' + process.env.FACEBOOK_APP_ID);
     console.log('  *** Attention *** Type  : User Access Token');
-    console.log('  *** Attention *** Scope : publish_actions, user_managed_groups');
+    console.log('  *** Attention *** Scope : publish_to_groups');
     console.log('***************************************************************************************************************');
 
     const r = readline.createInterface({ input: process.stdin, output: process.stdout });

@@ -30,7 +30,7 @@ function getCategories(categoryId) {
 // facebook post
 function fbPostGroup(message, link) {
   return new Promise((resolve, reject) => {
-    FB.options({ version: 'v2.9' });
+    FB.options({ version: 'v3.0' });
     FB.setAccessToken(process.env.FACEBOOK_ACCESS_TOKEN);
     FB.api(
       '/' + process.env.FACEBOOK_GROUP_ID + '/feed',
@@ -43,6 +43,7 @@ function fbPostGroup(message, link) {
         if (response && !response.error) {
           return resolve(response);
         }
+        console.error('fb.api error', response.error);
         return reject(response.error);
       }
     );
