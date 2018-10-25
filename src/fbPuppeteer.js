@@ -34,8 +34,8 @@ async function init() {
     waitUntil: 'networkidle2'
   });
   await _page.waitForSelector(ID.login);
-  await _page.type(ID.login, process.env.FBUSER);
-  await _page.type(ID.pass, process.env.FBPASS);
+  await _page.type(ID.login, process.env.FACEBOOK_USER);
+  await _page.type(ID.pass, process.env.FACEBOOK_PASS);
   await sleep(500);
 
   await _page.click('#loginbutton');
@@ -53,7 +53,7 @@ async function gotoGroupAndPost(message) {
   }
 
   try {
-    await fbPage.goto('https://www.facebook.com/groups/jsdev.kr/', {
+    await fbPage.goto(process.env.FACEBOOK_GROUP_URL, {
       waitUntil: 'networkidle2'
     });
     await fbPage.waitForSelector(ID.groupComposer);

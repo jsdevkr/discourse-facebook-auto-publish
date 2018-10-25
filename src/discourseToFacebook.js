@@ -1,6 +1,3 @@
-// import FB from 'fb';
-// import env from '../.env.js';
-
 import RestClient from './restClient';
 import fbPuppet from './fbPuppeteer';
 
