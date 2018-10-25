@@ -7,7 +7,7 @@
     "lint": "eslint -c .eslintrc src",
     "lintfix": "eslint -c .eslintrc src --fix",
     "build": "babel src --presets babel-preset-es2015 --out-dir lib",
-    "prestart": "npm run build && better-npm-run access-token",
+    "prestart": "npm run build",
     "dev": "npm run lint && npm run prestart && better-npm-run dev-deamon",
     "start": "pm2 start ./pm2.json",
     "start-docker": "npm run prestart && pm2 start ./pm2.json --no-daemon logs",
@@ -16,12 +16,6 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "betterScripts": {
-    "access-token": {
-      "command": "node ./lib/facebookAccessToken.js",
-      "env": {
-        "NODE_ENV": "developemnt"
-      }
-    },
     "dev-deamon": {
       "command": "node ./lib/index.js",
       "env": {
@@ -44,8 +38,9 @@
   "homepage": "https://github.com/gimdongwoo/discourse-facebook-post#readme",
   "dependencies": {
     "better-npm-run": "0.0.15",
-    "fb": "^2.0.0",
+    "dotenv": "^6.1.0",
     "nodemailer": "^3.1.1",
+    "puppeteer": "^1.9.0",
     "readline": "^1.3.0",
     "request": "^2.79.0"
   },
