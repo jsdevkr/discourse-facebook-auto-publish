@@ -1,54 +1,20 @@
 {
-  "name": "discourse-facebook-post",
-  "version": "0.1.0",
-  "description": "Discourse posts are posted to Facebook.",
-  "main": "lib/index.js",
+  "name": "discourse-facebook-hook",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
   "scripts": {
-    "lint": "eslint -c .eslintrc src",
-    "lintfix": "eslint -c .eslintrc src --fix",
-    "build": "babel src --presets babel-preset-es2015 --out-dir lib",
-    "prestart": "npm run build",
-    "dev": "npm run lint && npm run prestart && better-npm-run dev-deamon",
-    "start": "pm2 start ./pm2.json",
-    "start-docker": "npm run prestart && pm2 start ./pm2.json --no-daemon logs",
-    "restart": "pm2 restart ./pm2.json",
-    "stop": "pm2 stop ./pm2.json",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "betterScripts": {
-    "dev-deamon": {
-      "command": "node ./lib/index.js",
-      "env": {
-        "NODE_ENV": "developemnt"
-      }
-    }
-  },
-  "engines": {
-    "node": ">=6.9.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/gimdongwoo/discourse-facebook-post.git"
-  },
-  "author": "Dongwoo Gim <gimdongwoo@gmail.com> (https://github.com/gimdongwoo)",
-  "license": "Apache-2.0",
-  "bugs": {
-    "url": "https://github.com/gimdongwoo/discourse-facebook-post/issues"
-  },
-  "homepage": "https://github.com/gimdongwoo/discourse-facebook-post#readme",
+  "author": "",
+  "license": "ISC",
   "dependencies": {
-    "better-npm-run": "0.0.15",
+    "body-parser": "^1.18.3",
     "dotenv": "^6.1.0",
-    "nodemailer": "^3.1.1",
+    "express": "^4.16.4",
     "puppeteer": "^1.9.0",
-    "readline": "^1.3.0",
-    "request": "^2.79.0"
-  },
-  "devDependencies": {
-    "babel-cli": "^6.23.0",
-    "babel-preset-es2015": "^6.22.0",
-    "eslint": "^3.19.0",
-    "eslint-config-airbnb-base": "^11.1.3",
-    "eslint-plugin-import": "^2.2.0"
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2"
   }
 }
