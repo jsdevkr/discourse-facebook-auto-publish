@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 
-const sleep = async (ms) => {
-  return new Promise((res) => {
+const sleep = async ms => {
+  return new Promise(res => {
     setTimeout(() => {
       res();
     }, ms);
@@ -12,18 +12,16 @@ const ID = {
   login: '#m_login_email', //m.facebook login email input
   pass: '#m_login_password', //m.facebook login password input
   loginButton: 'button[data-sigil="touchable m_login_button"]', //m.facebook login subbmit button
-  // groupComposer: 'button[data-sigil="show_composer touchable"]',
-  // groupComposerTextFiled: 'textarea[data-sigil="composer-textarea m-textarea-input"]',
-  // groupSendPostBtn: 'button[data-testid="react-composer-post-button"]'
-  //group desktop facebook
-  groupComposer: '#pagelet_group_composer'
+  groupComposer: 'button[data-sigil="show_composer touchable"]',
+  groupComposerTextFiled: 'textarea[data-sigil="composer-textarea m-textarea-input"]',
+  groupSendPostBtn: 'button[data-sigil="touchable submit_composer"]',
 };
 
 let fbPage;
 
 async function init() {
   const options = {
-    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-notifications']
+    args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-notifications'],
   };
 
   if (process.env.NODE_ENV === 'development') {
@@ -39,30 +37,32 @@ async function init() {
   });
   // login
   await _page.goto('https://m.facebook.com/', {
-    waitUntil: 'networkidle2'
+    waitUntil: 'networkidle2',
   });
   await _page.waitForSelector(ID.login);
-  await _page.type(ID.login, process.env.FBUSER);
-  await _page.type(ID.pass, process.env.FBPASS);
+  await _page.type(ID.login, process.env.FACEBOOK_USER);
+  await _page.type(ID.pass, process.env.FACEBOOK_PASS);
   await sleep(500);
 
-  await Promise.all([
-    _page.waitForNavigation(),
-    _page.click(ID.loginButton)
-  ]);
+  await Promise.all([_page.waitForNavigation(), _page.click(ID.loginButton)]);
 
   await _page.screenshot({
-    path: 'public/after_login.png'
+    path: 'public/after_login.png',
   });
 
   fbPage = _page;
 }
 
-
 async function gotoGroupAndPost(message) {
   if (!fbPage) {
     // throw new Error('Please init fbPuppeteer before use');
     await init();
+  }
+
+  try {
+    await Promise.all([fbPage.waitForNavigation(), fbPage.click('button[value="확인"]')]);
+  } catch (e) {
+    console.error(e);
   }
 
   // 이상 로그인으로 분류 되었을 때 피하기 위한 로직
@@ -94,24 +94,24 @@ async function gotoGroupAndPost(message) {
   // }
 
   await fbPage.screenshot({
-    path: 'public/before_group.png'
+    path: 'public/before_group.png',
   });
 
   try {
-    await fbPage.goto('https://www.facebook.com/groups/124900807643966', {
-      waitUntil: 'networkidle2'
+    await fbPage.goto('https://m.facebook.com/groups/124900807643966', {
+      waitUntil: 'networkidle2',
     });
 
     await fbPage.waitForSelector(ID.groupComposer);
 
     await fbPage.screenshot({
-      path: 'public/after_groups.png'
+      path: 'public/after_groups.png',
     });
-    await fbPage.click(ID.groupComposer)
-    await sleep(2000);
-    await fbPage.keyboard.type(message + ' '); // Types instantly. Add last space for previwing link
+    await fbPage.click(ID.groupComposer);
+    await sleep(500);
+    await fbPage.type(ID.groupComposerTextFiled, message + ' '); // Types instantly. Add last space for previwing link
     await fbPage.screenshot({
-      path: 'public/after_type.png'
+      path: 'public/after_type.png',
     });
     await sleep(5000);
 
@@ -122,20 +122,19 @@ async function gotoGroupAndPost(message) {
     } else {
       await fbPage.click(ID.groupSendPostBtn);
     }
-    console.log('done!')
+    console.log('done!');
     await sleep(1000);
   } catch (e) {
     console.error(e);
     await fbPage.screenshot({
-      path: 'public/group_error.png'
+      path: 'public/group_error.png',
     });
     fbPage = null;
     throw e;
   }
 }
 
-
 module.exports = {
   init,
-  gotoGroupAndPost
+  gotoGroupAndPost,
 };
