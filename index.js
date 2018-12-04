@@ -65,8 +65,9 @@ function shareToFBGroup(topic, delay = 0) {
 
           await gotoGroupAndPost(message);
           console.log('fb posting successful', new Date());
-          resolve();
         }
+
+        resolve();
       } catch (error) {
         errors.push(error);
         // retry
