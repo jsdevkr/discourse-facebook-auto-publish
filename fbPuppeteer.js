@@ -122,7 +122,7 @@ async function gotoGroupAndPost(message) {
     } else {
       await fbPage.click(ID.groupSendPostBtn);
     }
-    console.log('done!');
+
     await sleep(1000);
   } catch (e) {
     console.error(e);

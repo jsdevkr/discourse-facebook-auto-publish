@@ -31,42 +31,54 @@ function getCategoryName(categoryId) {
   });
 }
 
-async function shareToFBGroup(topic, delay = 0) {
-  if (topic && topic.id && topic.archetype === 'regular') {
-    // regular가 개인 message 생성도 topic이어서 일반 topic인지 구분
+function shareToFBGroup(topic, delay = 0) {
+  return new Promise((resolve, reject) => {
+    let tryCount = 1;
+    const errors = [];
 
-    await sleep(delay);
-    const updatedTopic = await rp({
-      uri: process.env.DISCOURSE_URL + '/t/' + topic.id + '.json',
-      json: true,
-    });
+    (async function runner() {
+      try {
+        if (topic && topic.id && topic.archetype === 'regular') {
+          // regular가 개인 message 생성도 topic이어서 일반 topic인지 구분
 
-    if (updatedTopic) {
-      // Is it existed or not?
-      const displayCategoryName = await getCategoryName(updatedTopic.category_id)
-        .catch(() => {
-          return ''; //if error, ignore do not display category name
-        })
-        .then(name => (name ? `[${name}] ` : ''));
+          await sleep(delay);
+          const updatedTopic = await rp({
+            uri: process.env.DISCOURSE_URL + '/t/' + topic.id + '.json',
+            json: true,
+          });
 
-      const message = `${displayCategoryName}${updatedTopic.title}\nby @${topic.created_by.username} ${
-        process.env.DISCOURSE_URL
-      }/t/${topic.id}`;
-      console.log(message);
-      return gotoGroupAndPost(message)
-        .catch(e => {
-          console.error(e);
-          console.error('fb posting failed');
-        })
-        .then(() => {
-          console.log(new Date());
-        });
-    } else {
-      // not existed do nothing
-    }
-  } else {
-    reject('hook without topic');
-  }
+          if (!updatedTopic) {
+            return;
+          }
+
+          // Is it existed or not?
+          const displayCategoryName = await getCategoryName(updatedTopic.category_id)
+            .catch(() => {
+              return ''; //if error, ignore do not display category name
+            })
+            .then(name => (name ? `[${name}] ` : ''));
+
+          const message = `${displayCategoryName}${updatedTopic.title}\nby @${topic.created_by.username} ${
+            process.env.DISCOURSE_URL
+          }/t/${topic.id}`;
+          console.log(message);
+
+          await gotoGroupAndPost(message);
+          console.log('fb posting successful', new Date());
+          resolve();
+        }
+      } catch (error) {
+        errors.push(error);
+        // retry
+        if (tryCount < 3) {
+          tryCount++;
+          runner();
+        } else {
+          reject(errors);
+        }
+      }
+    })();
+  });
 }
 
 app.use(bodyParser.json());
@@ -76,8 +88,7 @@ app.post('/discoursehook', function(req, res) {
   const eventType = req.get('X-Discourse-Event');
   console.log(eventType);
   if (eventType === 'topic_created') {
-    const { topic } = req.body;
-    promiseQueue.push(() => shareToFBGroup(topic));
+    promiseQueue.push(() => shareToFBGroup(req.body.topic, 30 * 1000));
   }
   res.json({
     id: req.body.topic.id,
