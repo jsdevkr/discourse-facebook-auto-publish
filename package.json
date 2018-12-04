@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "node index.js",
+    "dev": "crossenv NODE_ENV=development node index.js",
     "start": "pm2 start ./pm2.json",
     "stop": "pm2 stop ./pm2.json",
     "log": "pm2 logs",
@@ -19,5 +19,8 @@
     "puppeteer": "^1.11.0",
     "request": "^2.88.0",
     "request-promise": "^4.2.2"
+  },
+  "devDependencies": {
+    "crossenv": "0.0.2-security"
   }
 }
