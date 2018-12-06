@@ -12,9 +12,9 @@ const ID = {
   login: '#m_login_email', //m.facebook login email input
   pass: '#m_login_password', //m.facebook login password input
   loginButton: 'button[data-sigil="touchable m_login_button"]', //m.facebook login subbmit button
-  groupComposer: 'button[data-sigil="show_composer touchable"]',
+  groupComposer: 'div[role="textbox"]',
   groupComposerTextFiled: 'textarea[data-sigil="composer-textarea m-textarea-input"]',
-  groupSendPostBtn: 'button[data-sigil="touchable submit_composer"]',
+  groupSendPostBtn: 'button[data-sigil="submit_composer"]',
 };
 
 let fbPage;
@@ -98,7 +98,7 @@ async function gotoGroupAndPost(message) {
   });
 
   try {
-    await fbPage.goto('https://m.facebook.com/groups/124900807643966', {
+    await fbPage.goto(process.env.FACEBOOK_GROUP_URL, {
       waitUntil: 'networkidle2',
     });
 
@@ -108,8 +108,11 @@ async function gotoGroupAndPost(message) {
       path: 'public/after_groups.png',
     });
     await fbPage.click(ID.groupComposer);
-    await sleep(500);
-    await fbPage.type(ID.groupComposerTextFiled, message + ' '); // Types instantly. Add last space for previwing link
+    await sleep(5000);
+    await fbPage.waitForSelector(ID.groupComposerTextFiled);
+    console.log('find groupComposerTextFiled');
+    await fbPage.click(ID.groupComposerTextFiled);
+    await fbPage.keyboard.type(message + ' '); // Types instantly. Add last space for previwing link
     await fbPage.screenshot({
       path: 'public/after_type.png',
     });
