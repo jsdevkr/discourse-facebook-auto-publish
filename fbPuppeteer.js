@@ -39,10 +39,11 @@ async function init() {
   await _page.goto('https://m.facebook.com/', {
     waitUntil: 'networkidle2',
   });
+  await sleep(3000);
   await _page.waitForSelector(ID.login);
   await _page.type(ID.login, process.env.FACEBOOK_USER);
   await _page.type(ID.pass, process.env.FACEBOOK_PASS);
-  await sleep(500);
+  await sleep(1000);
 
   await Promise.all([_page.waitForNavigation(), _page.click(ID.loginButton)]);
 
@@ -102,6 +103,7 @@ async function gotoGroupAndPost(message) {
       waitUntil: 'networkidle2',
     });
 
+    await sleep(5000);
     await fbPage.waitForSelector(ID.groupComposer);
 
     await fbPage.screenshot({
@@ -110,7 +112,6 @@ async function gotoGroupAndPost(message) {
     await fbPage.click(ID.groupComposer);
     await sleep(5000);
     await fbPage.waitForSelector(ID.groupComposerTextFiled);
-    console.log('find groupComposerTextFiled');
     await fbPage.click(ID.groupComposerTextFiled);
     await fbPage.keyboard.type(message + ' '); // Types instantly. Add last space for previwing link
     await fbPage.screenshot({
