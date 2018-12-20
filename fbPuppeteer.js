@@ -54,6 +54,14 @@ async function init() {
   fbPage = _page;
 }
 
+async function takeScreenshot(path) {
+  try {
+    await fbPage.screenshot({ path });
+  } catch (error) {
+    console.log('screenshot error:', 'public/before_group.png', error);
+  }
+}
+
 async function gotoGroupAndPost(message) {
   if (!fbPage) {
     // throw new Error('Please init fbPuppeteer before use');
@@ -94,9 +102,7 @@ async function gotoGroupAndPost(message) {
   //   console.error(e);
   // }
 
-  await fbPage.screenshot({
-    path: 'public/before_group.png',
-  });
+  await takeScreenshot('public/before_group.png');
 
   try {
     await fbPage.goto(process.env.FACEBOOK_GROUP_URL, {
@@ -106,17 +112,13 @@ async function gotoGroupAndPost(message) {
     await sleep(5000);
     await fbPage.waitForSelector(ID.groupComposer);
 
-    await fbPage.screenshot({
-      path: 'public/after_groups.png',
-    });
+    await takeScreenshot('public/after_groups.png');
     await fbPage.click(ID.groupComposer);
     await sleep(5000);
     await fbPage.waitForSelector(ID.groupComposerTextFiled);
     await fbPage.click(ID.groupComposerTextFiled);
     await fbPage.keyboard.type(message + ' '); // Types instantly. Add last space for previwing link
-    await fbPage.screenshot({
-      path: 'public/after_type.png',
-    });
+    await takeScreenshot('public/after_type.png');
     await sleep(5000);
 
     if (process.env.NODE_ENV === 'development') {
@@ -130,9 +132,7 @@ async function gotoGroupAndPost(message) {
     await sleep(1000);
   } catch (e) {
     console.error(e);
-    await fbPage.screenshot({
-      path: 'public/group_error.png',
-    });
+    await takeScreenshot('public/group_error.png');
     fbPage = null;
     throw e;
   }
