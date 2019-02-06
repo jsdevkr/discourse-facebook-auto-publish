@@ -44,3 +44,4 @@ jspm_packages
 .idea
 public/*
 !public/index.html
+dist
