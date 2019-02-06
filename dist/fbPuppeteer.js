@@ -18,8 +18,7 @@ const ID = {
     groupComposerTextFiled: 'textarea[data-sigil="composer-textarea m-textarea-input"]',
     groupSendPostBtn: 'button[data-sigil="submit_composer"]',
 };
-let fbPage;
-function init() {
+function puppeteerInit(fbUserId, fbUserPassword) {
     return __awaiter(this, void 0, void 0, function* () {
         const options = {
             args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-notifications'],
@@ -33,26 +32,26 @@ function init() {
             console.log(dialog.message());
             yield dialog.accept();
         }));
-        if (!process.env.FACEBOOK_USER || !process.env.FACEBOOK_PASS) {
-            throw 'now facebook account';
+        if (!fbUserId || !fbUserPassword) {
+            throw 'now facebook account info';
         }
         yield _page.goto('https://m.facebook.com/', {
             waitUntil: 'networkidle2',
         });
         yield helper_1.sleep(3000);
         yield _page.waitForSelector(ID.login);
-        yield _page.type(ID.login, process.env.FACEBOOK_USER);
-        yield _page.type(ID.pass, process.env.FACEBOOK_PASS);
+        yield _page.type(ID.login, fbUserId);
+        yield _page.type(ID.pass, fbUserPassword);
         yield helper_1.sleep(1000);
         yield Promise.all([_page.waitForNavigation(), _page.click(ID.loginButton)]);
         yield _page.screenshot({
             path: 'public/after_login.png',
         });
-        fbPage = _page;
+        return _page;
     });
 }
-exports.init = init;
-function takeScreenshot(path) {
+exports.puppeteerInit = puppeteerInit;
+function takeScreenshot(fbPage, path) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!fbPage) {
             throw 'no facebook puppeteer page';
@@ -65,11 +64,8 @@ function takeScreenshot(path) {
         }
     });
 }
-function gotoGroupAndPost(message) {
+function gotoGroupAndPost(fbPage, facebookGroupUrl, message) {
     return __awaiter(this, void 0, void 0, function* () {
-        if (!fbPage) {
-            yield init();
-        }
         if (!fbPage) {
             throw 'no facebook puppeteer page';
         }
@@ -79,23 +75,23 @@ function gotoGroupAndPost(message) {
         catch (e) {
             console.error(e);
         }
-        yield takeScreenshot('public/before_group.png');
-        if (!process.env.FACEBOOK_GROUP_URL) {
+        yield takeScreenshot(fbPage, 'public/before_group.png');
+        if (!facebookGroupUrl) {
             throw 'no facebook group url';
         }
         try {
-            yield fbPage.goto(process.env.FACEBOOK_GROUP_URL, {
+            yield fbPage.goto(facebookGroupUrl, {
                 waitUntil: 'networkidle2',
             });
             yield helper_1.sleep(5000);
             yield fbPage.waitForSelector(ID.groupComposer);
-            yield takeScreenshot('public/after_groups.png');
+            yield takeScreenshot(fbPage, 'public/after_groups.png');
             yield fbPage.click(ID.groupComposer);
             yield helper_1.sleep(5000);
             yield fbPage.waitForSelector(ID.groupComposerTextFiled);
             yield fbPage.click(ID.groupComposerTextFiled);
             yield fbPage.keyboard.type(message + ' ');
-            yield takeScreenshot('public/after_type.png');
+            yield takeScreenshot(fbPage, 'public/after_type.png');
             yield helper_1.sleep(5000);
             if (process.env.NODE_ENV === 'development') {
                 yield fbPage.keyboard.press('Escape');
@@ -109,8 +105,7 @@ function gotoGroupAndPost(message) {
         }
         catch (e) {
             console.error(e);
-            yield takeScreenshot('public/group_error.png');
-            fbPage = null;
+            yield takeScreenshot(fbPage, 'public/group_error.png');
             throw e;
         }
     });

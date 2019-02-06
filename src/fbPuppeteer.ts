@@ -10,9 +10,7 @@ const ID = {
   groupSendPostBtn: 'button[data-sigil="submit_composer"]',
 };
 
-let fbPage: puppeteer.Page | null;
-
-export async function init() {
+export async function puppeteerInit(fbUserId: string, fbUserPassword: string) {
   const options: puppeteer.LaunchOptions = {
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-notifications'],
   };
@@ -29,16 +27,16 @@ export async function init() {
     await dialog.accept();
   });
   // login
-  if (!process.env.FACEBOOK_USER || !process.env.FACEBOOK_PASS) {
-    throw 'now facebook account';
+  if (!fbUserId || !fbUserPassword) {
+    throw 'now facebook account info';
   }
   await _page.goto('https://m.facebook.com/', {
     waitUntil: 'networkidle2',
   });
   await sleep(3000);
   await _page.waitForSelector(ID.login);
-  await _page.type(ID.login, process.env.FACEBOOK_USER);
-  await _page.type(ID.pass, process.env.FACEBOOK_PASS);
+  await _page.type(ID.login, fbUserId);
+  await _page.type(ID.pass, fbUserPassword);
   await sleep(1000);
 
   await Promise.all([_page.waitForNavigation(), _page.click(ID.loginButton)]);
@@ -47,10 +45,10 @@ export async function init() {
     path: 'public/after_login.png',
   });
 
-  fbPage = _page;
+  return _page;
 }
 
-async function takeScreenshot(path: string) {
+async function takeScreenshot(fbPage: puppeteer.Page, path: string) {
   if (!fbPage) {
     throw 'no facebook puppeteer page';
   }
@@ -61,12 +59,7 @@ async function takeScreenshot(path: string) {
   }
 }
 
-export async function gotoGroupAndPost(message: any) {
-  if (!fbPage) {
-    // throw new Error('Please init fbPuppeteer before use');
-    await init();
-  }
-
+export async function gotoGroupAndPost(fbPage: puppeteer.Page, facebookGroupUrl: string, message: any) {
   if (!fbPage) {
     throw 'no facebook puppeteer page';
   }
@@ -104,26 +97,26 @@ export async function gotoGroupAndPost(message: any) {
   //   console.error(e);
   // }
 
-  await takeScreenshot('public/before_group.png');
+  await takeScreenshot(fbPage, 'public/before_group.png');
 
-  if (!process.env.FACEBOOK_GROUP_URL) {
+  if (!facebookGroupUrl) {
     throw 'no facebook group url';
   }
   try {
-    await fbPage.goto(process.env.FACEBOOK_GROUP_URL, {
+    await fbPage.goto(facebookGroupUrl, {
       waitUntil: 'networkidle2',
     });
 
     await sleep(5000);
     await fbPage.waitForSelector(ID.groupComposer);
 
-    await takeScreenshot('public/after_groups.png');
+    await takeScreenshot(fbPage, 'public/after_groups.png');
     await fbPage.click(ID.groupComposer);
     await sleep(5000);
     await fbPage.waitForSelector(ID.groupComposerTextFiled);
     await fbPage.click(ID.groupComposerTextFiled);
     await fbPage.keyboard.type(message + ' '); // Types instantly. Add last space for previwing link
-    await takeScreenshot('public/after_type.png');
+    await takeScreenshot(fbPage, 'public/after_type.png');
     await sleep(5000);
 
     if (process.env.NODE_ENV === 'development') {
@@ -137,8 +130,7 @@ export async function gotoGroupAndPost(message: any) {
     await sleep(1000);
   } catch (e) {
     console.error(e);
-    await takeScreenshot('public/group_error.png');
-    fbPage = null;
+    await takeScreenshot(fbPage, 'public/group_error.png');
     throw e;
   }
 }
