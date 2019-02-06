@@ -12,7 +12,7 @@ A specially developed webhook for publish discourse articles to the facebook gro
 $ npm insatll
 ```
 
-- Start Server - It has a pre-process to get the Facebook token.
+- Start Server - You need to configure, below the `Configuration` section.
 
 ```console
 $ npm start
