@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "cross-env NODE_ENV=development ts-node src/index.ts",
     "build": "rimraf dist && tsc",
-    "start": "pm2 start ./pm2.json",
+    "start": "npm run build && pm2 start ./pm2.json",
     "stop": "pm2 stop ./pm2.json",
     "log": "pm2 logs",
     "test": "echo \"Error: no test specified\" && exit 1"
