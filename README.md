@@ -40,12 +40,14 @@ http://__HOST__:__PORT__/discoursehook_delay
 SITE_0_PORT=8080
 SITE_0_POSTED_AFTER_MIN=5
 SITE_0_DISCOURSE_URL=https://jsdev.kr
-SITE_0_FACEBOOK_GROUP_ID=124900807643966
+SITE_0_FACEBOOK_GROUP_ID=jsdevkr
 SITE_0_FACEBOOK_USER=
 SITE_0_FACEBOOK_PASS=
 ```
 
-You can adding multi config using `SITE_${NUMBER}_`.
+The `FACEBOOK_GROUP_ID` is `facebook.com/groups/__HERE__/`
+
+- You can adding multi config using `SITE_${NUMBER}_`.
 
 ## To do
 
