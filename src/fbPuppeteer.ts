@@ -59,7 +59,7 @@ async function takeScreenshot(fbPage: puppeteer.Page, path: string) {
   }
 }
 
-export async function gotoGroupAndPost(fbPage: puppeteer.Page, facebookGroupUrl: string, message: any) {
+export async function gotoGroupAndPost(fbPage: puppeteer.Page, facebookGroupId: string, message: any) {
   if (!fbPage) {
     throw 'no facebook puppeteer page';
   }
@@ -99,11 +99,11 @@ export async function gotoGroupAndPost(fbPage: puppeteer.Page, facebookGroupUrl:
 
   await takeScreenshot(fbPage, 'public/before_group.png');
 
-  if (!facebookGroupUrl) {
+  if (!facebookGroupId) {
     throw 'no facebook group url';
   }
   try {
-    await fbPage.goto(facebookGroupUrl, {
+    await fbPage.goto(`https://m.facebook.com/groups/${facebookGroupId}`, {
       waitUntil: 'networkidle2',
     });
 

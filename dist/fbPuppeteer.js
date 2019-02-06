@@ -64,7 +64,7 @@ function takeScreenshot(fbPage, path) {
         }
     });
 }
-function gotoGroupAndPost(fbPage, facebookGroupUrl, message) {
+function gotoGroupAndPost(fbPage, facebookGroupId, message) {
     return __awaiter(this, void 0, void 0, function* () {
         if (!fbPage) {
             throw 'no facebook puppeteer page';
@@ -76,11 +76,11 @@ function gotoGroupAndPost(fbPage, facebookGroupUrl, message) {
             console.error(e);
         }
         yield takeScreenshot(fbPage, 'public/before_group.png');
-        if (!facebookGroupUrl) {
+        if (!facebookGroupId) {
             throw 'no facebook group url';
         }
         try {
-            yield fbPage.goto(facebookGroupUrl, {
+            yield fbPage.goto(`https://m.facebook.com/groups/${facebookGroupId}`, {
                 waitUntil: 'networkidle2',
             });
             yield helper_1.sleep(5000);

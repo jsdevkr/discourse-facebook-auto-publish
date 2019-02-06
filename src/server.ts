@@ -6,32 +6,34 @@ import * as rp from 'request-promise';
 import { puppeteerInit, gotoGroupAndPost } from './fbPuppeteer';
 import { sleep, promiseQueue } from './helper';
 
+export interface IServerOptions {
+  port?: number;
+  postedAfterMin?: number;
+  discourseUrl?: string;
+  facebookGroupId?: string;
+  fbUserId?: string;
+  fbUserPassword?: string;
+}
+
 export default class Server {
   app: express.Express;
   port: number;
   discourseUrl: string;
   postedAfterMin: number;
-  facebookGroupUrl: string;
+  facebookGroupId: string;
   fbUserId: string;
   fbUserPassword: string;
   fbPage: puppeteer.Page | null;
 
-  constructor(options: {
-    port?: number;
-    postedAfterMin?: number;
-    discourseUrl?: string;
-    facebookGroupUrl?: string;
-    fbUserId?: string;
-    fbUserPassword?: string;
-  }) {
-    if (!options.discourseUrl || !options.facebookGroupUrl || !options.fbUserId || !options.fbUserPassword) {
+  constructor(options: IServerOptions) {
+    if (!options.discourseUrl || !options.facebookGroupId || !options.fbUserId || !options.fbUserPassword) {
       throw 'invalid options';
     }
 
     this.port = options.port || 8080;
     this.discourseUrl = options.discourseUrl;
     this.postedAfterMin = options.postedAfterMin || 5;
-    this.facebookGroupUrl = options.facebookGroupUrl;
+    this.facebookGroupId = options.facebookGroupId;
     this.fbUserId = options.fbUserId;
     this.fbUserPassword = options.fbUserPassword;
 
@@ -40,7 +42,7 @@ export default class Server {
 
   getCategoryName = async (categoryId: string | number) => {
     const results = await rp({
-      uri: this.discourseUrl + '/site.json',
+      uri: (this.discourseUrl + '/site.json').replace('//', '/'),
       json: true,
     });
     if (results && results.categories) {
@@ -88,14 +90,14 @@ export default class Server {
           const message = `${displayCategoryName}${updatedTopic.title}\nby @${topic.created_by.username} ${
             this.discourseUrl
           }/t/${topic.id}`;
-          console.log(message);
+          console.log(`[${this.discourseUrl}]`, message);
 
           if (!this.fbPage) {
             this.fbPage = await puppeteerInit(this.fbUserId, this.fbUserPassword);
           }
 
-          await gotoGroupAndPost(this.fbPage, this.facebookGroupUrl, message);
-          console.log('fb posting successful', new Date());
+          await gotoGroupAndPost(this.fbPage, this.facebookGroupId, message);
+          console.log(`[${this.discourseUrl}]`, 'fb posting successful', new Date());
         }
 
         success = true;
@@ -120,7 +122,7 @@ export default class Server {
 
     this.app.post('/discoursehook', (req, res) => {
       const eventType = req.get('X-Discourse-Event');
-      console.log(eventType);
+      console.log(`[${this.discourseUrl}]`, eventType);
       if (eventType === 'topic_created') {
         promiseQueue.push(() => this.shareToFBGroup(req.body.topic, 30 * 1000));
       }
@@ -133,7 +135,7 @@ export default class Server {
 
     this.app.post('/discoursehook_delay', (req, res) => {
       const eventType = req.get('X-Discourse-Event');
-      console.log(eventType);
+      console.log(`[${this.discourseUrl}]`, eventType);
       if (eventType === 'topic_created') {
         promiseQueue.push(() => this.shareToFBGroup(req.body.topic, 60 * 1000 * this.postedAfterMin));
       }
@@ -145,14 +147,14 @@ export default class Server {
     });
 
     this.app.get('/', (req, res) => {
-      console.log('Hello World!');
+      console.log(`[${this.discourseUrl}]`, 'Hello World!');
       res.json({
         success: true,
       });
     });
 
     this.app.listen(this.port, () => {
-      console.log(`Server listening on port ${this.port}!`);
+      console.log(`[${this.discourseUrl}]`, `Server listening on port ${this.port}!`);
     });
   };
 }

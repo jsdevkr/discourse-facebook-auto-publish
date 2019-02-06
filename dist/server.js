@@ -17,7 +17,7 @@ class Server {
     constructor(options) {
         this.getCategoryName = (categoryId) => __awaiter(this, void 0, void 0, function* () {
             const results = yield rp({
-                uri: this.discourseUrl + '/site.json',
+                uri: (this.discourseUrl + '/site.json').replace('//', '/'),
                 json: true,
             });
             if (results && results.categories) {
@@ -56,12 +56,12 @@ class Server {
                         })
                             .then(name => (name ? `[${name}] ` : ''));
                         const message = `${displayCategoryName}${updatedTopic.title}\nby @${topic.created_by.username} ${this.discourseUrl}/t/${topic.id}`;
-                        console.log(message);
+                        console.log(`[${this.discourseUrl}]`, message);
                         if (!this.fbPage) {
                             this.fbPage = yield fbPuppeteer_1.puppeteerInit(this.fbUserId, this.fbUserPassword);
                         }
-                        yield fbPuppeteer_1.gotoGroupAndPost(this.fbPage, this.facebookGroupUrl, message);
-                        console.log('fb posting successful', new Date());
+                        yield fbPuppeteer_1.gotoGroupAndPost(this.fbPage, this.facebookGroupId, message);
+                        console.log(`[${this.discourseUrl}]`, 'fb posting successful', new Date());
                     }
                     success = true;
                 }
@@ -83,7 +83,7 @@ class Server {
             this.app.use(express.static('public'));
             this.app.post('/discoursehook', (req, res) => {
                 const eventType = req.get('X-Discourse-Event');
-                console.log(eventType);
+                console.log(`[${this.discourseUrl}]`, eventType);
                 if (eventType === 'topic_created') {
                     helper_1.promiseQueue.push(() => this.shareToFBGroup(req.body.topic, 30 * 1000));
                 }
@@ -95,7 +95,7 @@ class Server {
             });
             this.app.post('/discoursehook_delay', (req, res) => {
                 const eventType = req.get('X-Discourse-Event');
-                console.log(eventType);
+                console.log(`[${this.discourseUrl}]`, eventType);
                 if (eventType === 'topic_created') {
                     helper_1.promiseQueue.push(() => this.shareToFBGroup(req.body.topic, 60 * 1000 * this.postedAfterMin));
                 }
@@ -106,22 +106,22 @@ class Server {
                 });
             });
             this.app.get('/', (req, res) => {
-                console.log('Hello World!');
+                console.log(`[${this.discourseUrl}]`, 'Hello World!');
                 res.json({
                     success: true,
                 });
             });
             this.app.listen(this.port, () => {
-                console.log(`Server listening on port ${this.port}!`);
+                console.log(`[${this.discourseUrl}]`, `Server listening on port ${this.port}!`);
             });
         };
-        if (!options.discourseUrl || !options.facebookGroupUrl || !options.fbUserId || !options.fbUserPassword) {
+        if (!options.discourseUrl || !options.facebookGroupId || !options.fbUserId || !options.fbUserPassword) {
             throw 'invalid options';
         }
         this.port = options.port || 8080;
         this.discourseUrl = options.discourseUrl;
         this.postedAfterMin = options.postedAfterMin || 5;
-        this.facebookGroupUrl = options.facebookGroupUrl;
+        this.facebookGroupId = options.facebookGroupId;
         this.fbUserId = options.fbUserId;
         this.fbUserPassword = options.fbUserPassword;
         this.createApp();
