@@ -7,8 +7,8 @@ import { puppeteerInit, gotoGroupAndPost } from './fbPuppeteer';
 import { sleep, promiseQueue } from './helper';
 
 export interface IServerOptions {
-  port?: number;
-  postedAfterMin?: number;
+  port?: string;
+  postedAfterMin?: string;
   discourseUrl?: string;
   facebookGroupId?: string;
   fbUserId?: string;
@@ -30,9 +30,9 @@ export default class Server {
       throw 'invalid options';
     }
 
-    this.port = options.port || 8080;
+    this.port = Number(options.port || 8080);
     this.discourseUrl = options.discourseUrl;
-    this.postedAfterMin = options.postedAfterMin || 5;
+    this.postedAfterMin = Number(options.postedAfterMin || 5);
     this.facebookGroupId = options.facebookGroupId;
     this.fbUserId = options.fbUserId;
     this.fbUserPassword = options.fbUserPassword;
