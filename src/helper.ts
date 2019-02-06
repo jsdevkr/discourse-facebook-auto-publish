@@ -1,4 +1,4 @@
-const sleep = async ms => {
+export const sleep = async (ms: number) => {
   return new Promise(res => {
     setTimeout(() => {
       res();
@@ -6,9 +6,9 @@ const sleep = async ms => {
   });
 };
 
-const promiseQueue = (() => {
-  const _queue = [];
-  let _promise = null;
+export const promiseQueue = (() => {
+  const _queue: any = [];
+  let _promise: Promise<any> | null = null;
 
   return {
     _next: function() {
@@ -29,15 +29,10 @@ const promiseQueue = (() => {
 
       _promise = (_promise || Promise.resolve()).then(run, run);
     },
-    push: function(fn) {
+    push: function(fn: any) {
       _queue.push(fn);
       this._next();
       return this; //for chainning
     },
   };
 })();
-
-module.exports = {
-  sleep,
-  promiseQueue,
-};

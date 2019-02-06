@@ -1,12 +1,5 @@
-const puppeteer = require('puppeteer');
-
-const sleep = async ms => {
-  return new Promise(res => {
-    setTimeout(() => {
-      res();
-    }, ms);
-  });
-};
+import * as puppeteer from 'puppeteer';
+import { sleep } from './helper';
 
 const ID = {
   login: '#m_login_email', //m.facebook login email input
@@ -17,10 +10,10 @@ const ID = {
   groupSendPostBtn: 'button[data-sigil="submit_composer"]',
 };
 
-let fbPage;
+let fbPage: puppeteer.Page | null;
 
-async function init() {
-  const options = {
+export async function init() {
+  const options: puppeteer.LaunchOptions = {
     args: ['--no-sandbox', '--disable-setuid-sandbox', '--disable-notifications'],
   };
 
@@ -36,6 +29,9 @@ async function init() {
     await dialog.accept();
   });
   // login
+  if (!process.env.FACEBOOK_USER || !process.env.FACEBOOK_PASS) {
+    throw 'now facebook account';
+  }
   await _page.goto('https://m.facebook.com/', {
     waitUntil: 'networkidle2',
   });
@@ -54,7 +50,10 @@ async function init() {
   fbPage = _page;
 }
 
-async function takeScreenshot(path) {
+async function takeScreenshot(path: string) {
+  if (!fbPage) {
+    throw 'no facebook puppeteer page';
+  }
   try {
     await fbPage.screenshot({ path });
   } catch (error) {
@@ -62,12 +61,15 @@ async function takeScreenshot(path) {
   }
 }
 
-async function gotoGroupAndPost(message) {
+export async function gotoGroupAndPost(message: any) {
   if (!fbPage) {
     // throw new Error('Please init fbPuppeteer before use');
     await init();
   }
 
+  if (!fbPage) {
+    throw 'no facebook puppeteer page';
+  }
   try {
     await Promise.all([fbPage.waitForNavigation(), fbPage.click('button[value="확인"]')]);
   } catch (e) {
@@ -104,6 +106,9 @@ async function gotoGroupAndPost(message) {
 
   await takeScreenshot('public/before_group.png');
 
+  if (!process.env.FACEBOOK_GROUP_URL) {
+    throw 'no facebook group url';
+  }
   try {
     await fbPage.goto(process.env.FACEBOOK_GROUP_URL, {
       waitUntil: 'networkidle2',
@@ -137,8 +142,3 @@ async function gotoGroupAndPost(message) {
     throw e;
   }
 }
-
-module.exports = {
-  init,
-  gotoGroupAndPost,
-};

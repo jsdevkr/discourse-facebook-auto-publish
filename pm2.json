@@ -1,12 +1,10 @@
 {
-  "apps" : [
-    {
-      "name": "discourse-facebook-post",
-      "script": "./index.js",
-      "exec_mode"  : "fork",
-      "env": {
-        "NODE_ENV": "production"
-      }
+  "apps": [{
+    "name": "discourse-facebook-post",
+    "script": "./dist/index.js",
+    "exec_mode": "fork",
+    "env": {
+      "NODE_ENV": "production"
     }
-  ]
+  }]
 }
