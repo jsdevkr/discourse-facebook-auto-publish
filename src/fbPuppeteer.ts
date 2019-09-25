@@ -66,11 +66,12 @@ export async function gotoGroupAndPost(fbPage: puppeteer.Page, facebookGroupId: 
   if (!fbPage) {
     throw 'no facebook puppeteer page';
   }
+
+  await fbPage.waitForNavigation();
   try {
-    await Promise.all([fbPage.waitForNavigation(), fbPage.click('button[value="OK"]')]);
-  } catch (e) {
-    console.error(e);
-  }
+    fbPage.click('button[value="OK"]');
+    await sleep(3000);
+  } catch (error) {}
 
   // 이상 로그인으로 분류 되었을 때 피하기 위한 로직
   // try {
@@ -105,6 +106,7 @@ export async function gotoGroupAndPost(fbPage: puppeteer.Page, facebookGroupId: 
   if (!facebookGroupId) {
     throw 'no facebook group url';
   }
+
   try {
     await fbPage.goto(`https://m.facebook.com/groups/${facebookGroupId}`, {
       waitUntil: 'networkidle2',
