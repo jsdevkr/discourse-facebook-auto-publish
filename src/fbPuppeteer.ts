@@ -69,7 +69,7 @@ export async function gotoGroupAndPost(fbPage: puppeteer.Page, facebookGroupId: 
 
   await fbPage.waitForNavigation();
   try {
-    fbPage.click('button[value="OK"]');
+    await fbPage.click('button[value="OK"]');
     await sleep(3000);
   } catch (error) {}
 
