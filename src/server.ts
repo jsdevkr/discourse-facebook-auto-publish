@@ -24,6 +24,7 @@ export default class Server {
   fbUserId: string;
   fbUserPassword: string;
   fbPage: puppeteer.Page | null;
+  fbBrowser: puppeteer.Browser | null;
 
   constructor(options: IServerOptions) {
     if (!options.discourseUrl || !options.facebookGroupId || !options.fbUserId || !options.fbUserPassword) {
@@ -87,25 +88,35 @@ export default class Server {
             })
             .then(name => (name ? `[${name}] ` : ''));
 
-          const message = `${displayCategoryName}${updatedTopic.title}\nby @${topic.created_by.username} ${
-            this.discourseUrl
-          }/t/${topic.id}`;
+          const message = `${displayCategoryName}${updatedTopic.title}\nby @${topic.created_by.username} ${this.discourseUrl}/t/${topic.id}`;
           console.log(`[${this.discourseUrl}]`, message);
 
           if (!this.fbPage) {
-            this.fbPage = await puppeteerInit(this.fbUserId, this.fbUserPassword);
+            const { page, browser } = await puppeteerInit(this.fbUserId, this.fbUserPassword);
+            this.fbPage = page;
+            this.fbBrowser = browser;
           }
 
           await gotoGroupAndPost(this.fbPage, this.facebookGroupId, message);
           console.log(`[${this.discourseUrl}]`, 'fb posting successful', new Date());
+        } else {
+          console.log(`[${this.discourseUrl}]`, 'skip: not regular post', new Date());
         }
 
         success = true;
       } catch (error) {
+        console.error(`shareToFBGroup / tryCount: ${tryCount} / error`, error);
         errors.push(error);
         // retry
         if (tryCount < 3) {
-          this.fbPage = null;
+          if (this.fbPage) {
+            this.fbPage.close();
+            this.fbPage = null;
+          }
+          if (this.fbBrowser) {
+            this.fbBrowser.close();
+            this.fbBrowser = null;
+          }
           tryCount++;
         } else {
           throw errors;

@@ -18,12 +18,12 @@ export async function puppeteerInit(fbUserId: string, fbUserPassword: string) {
   if (process.env.NODE_ENV === 'development') {
     options.headless = false;
   }
-  console.log('puppeteer options', options);
+  console.log('puppeteerInit / puppeteer options', options);
 
   const browser = await puppeteer.launch(options);
-  const _page = await browser.newPage();
+  const page = await browser.newPage();
 
-  _page.on('dialog', async dialog => {
+  page.on('dialog', async dialog => {
     console.log(dialog.message());
     await dialog.accept();
   });
@@ -31,23 +31,23 @@ export async function puppeteerInit(fbUserId: string, fbUserPassword: string) {
   if (!fbUserId || !fbUserPassword) {
     throw 'now facebook account info';
   }
-  await _page.goto('https://m.facebook.com/', {
+  await page.goto('https://m.facebook.com/', {
     waitUntil: 'networkidle2',
   });
   await sleep(3000);
-  await _page.waitForSelector(ID.login);
-  await _page.type(ID.login, fbUserId);
-  await _page.type(ID.pass, fbUserPassword);
+  await page.waitForSelector(ID.login);
+  await page.type(ID.login, fbUserId);
+  await page.type(ID.pass, fbUserPassword);
   await sleep(1000);
 
-  await Promise.all([_page.waitForNavigation(), _page.click(ID.loginButton)]);
+  await Promise.all([page.waitForNavigation(), page.click(ID.loginButton)]);
 
-  await _page.screenshot({
+  await page.screenshot({
     path: 'public/after_login.png',
   });
 
   try {
-    await Promise.all([_page.waitForNavigation(), _page.click('button[value="OK"]')]);
+    await Promise.all([page.waitForNavigation(), page.click('button[value="OK"]')]);
     await sleep(3000);
 
     // 이상 로그인으로 분류 되었을 때 피하기 위한 로직
@@ -83,7 +83,7 @@ export async function puppeteerInit(fbUserId: string, fbUserPassword: string) {
 
   console.log('puppeteer puppeteerInit success');
 
-  return _page;
+  return { page, browser };
 }
 
 async function takeScreenshot(fbPage: puppeteer.Page, path: string) {
