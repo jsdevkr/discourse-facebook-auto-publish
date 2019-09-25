@@ -46,6 +46,41 @@ export async function puppeteerInit(fbUserId: string, fbUserPassword: string) {
     path: 'public/after_login.png',
   });
 
+  try {
+    await Promise.all([_page.waitForNavigation(), _page.click('button[value="OK"]')]);
+    await sleep(3000);
+
+    // 이상 로그인으로 분류 되었을 때 피하기 위한 로직
+    // try {
+    //   await fbPage.click('#checkpointSubmitButton-actual-button');
+    //   await sleep(4000);
+    //   await fbPage.screenshot({
+    //     path: 'public/before_select.png'
+    //   });
+    //   await fbPage.click('label:nth-of-type(2)').catch((e)=>{
+    //     console.error('### label', e);
+    //   });
+    //   await sleep(4000);
+    //   await fbPage.click('#checkpointSubmitButton-actual-button').catch(()=>{});;
+    //   await sleep(4000);
+    //   await fbPage.click('input[value="1900"]').catch(()=>{});;
+    //   await sleep(4000);
+    //   await fbPage.click('input[value="1"]').catch(()=>{});;
+    //   await sleep(4000);
+    //   await fbPage.click('input[value="31"]').catch(()=>{});;
+    //   await sleep(4000);
+    //   await fbPage.click('#checkpointSubmitButton-actual-button').catch(()=>{});;
+    //   await sleep(4000);
+    //   await fbPage.click('#checkpointSubmitButton-actual-button').catch(()=>{});;
+    //   await sleep(4000);
+
+    // } catch (e){
+    //   console.error(e);
+    // }
+  } catch (error) {
+    console.error('error on after login page handling', error);
+  }
+
   console.log('puppeteer puppeteerInit success');
 
   return _page;
@@ -66,40 +101,6 @@ export async function gotoGroupAndPost(fbPage: puppeteer.Page, facebookGroupId: 
   if (!fbPage) {
     throw 'no facebook puppeteer page';
   }
-
-  await fbPage.waitForNavigation();
-  try {
-    await fbPage.click('button[value="OK"]');
-    await sleep(3000);
-  } catch (error) {}
-
-  // 이상 로그인으로 분류 되었을 때 피하기 위한 로직
-  // try {
-  //   await fbPage.click('#checkpointSubmitButton-actual-button');
-  //   await sleep(4000);
-  //   await fbPage.screenshot({
-  //     path: 'public/before_select.png'
-  //   });
-  //   await fbPage.click('label:nth-of-type(2)').catch((e)=>{
-  //     console.error('### label', e);
-  //   });
-  //   await sleep(4000);
-  //   await fbPage.click('#checkpointSubmitButton-actual-button').catch(()=>{});;
-  //   await sleep(4000);
-  //   await fbPage.click('input[value="1900"]').catch(()=>{});;
-  //   await sleep(4000);
-  //   await fbPage.click('input[value="1"]').catch(()=>{});;
-  //   await sleep(4000);
-  //   await fbPage.click('input[value="31"]').catch(()=>{});;
-  //   await sleep(4000);
-  //   await fbPage.click('#checkpointSubmitButton-actual-button').catch(()=>{});;
-  //   await sleep(4000);
-  //   await fbPage.click('#checkpointSubmitButton-actual-button').catch(()=>{});;
-  //   await sleep(4000);
-
-  // } catch (e){
-  //   console.error(e);
-  // }
 
   await takeScreenshot(fbPage, 'public/before_group.png');
 
