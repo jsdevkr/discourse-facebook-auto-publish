@@ -18,6 +18,7 @@ export async function puppeteerInit(fbUserId: string, fbUserPassword: string) {
   if (process.env.NODE_ENV === 'development') {
     options.headless = false;
   }
+  console.log('puppeteer options', options);
 
   const browser = await puppeteer.launch(options);
   const _page = await browser.newPage();
@@ -44,6 +45,8 @@ export async function puppeteerInit(fbUserId: string, fbUserPassword: string) {
   await _page.screenshot({
     path: 'public/after_login.png',
   });
+
+  console.log('puppeteer puppeteerInit success');
 
   return _page;
 }
@@ -106,18 +109,22 @@ export async function gotoGroupAndPost(fbPage: puppeteer.Page, facebookGroupId: 
     await fbPage.goto(`https://m.facebook.com/groups/${facebookGroupId}`, {
       waitUntil: 'networkidle2',
     });
-
-    await sleep(5000);
-    await fbPage.waitForSelector(ID.groupComposer);
-
+    await sleep(3000);
     await takeScreenshot(fbPage, 'public/after_groups.png');
+    console.log('puppeteer gotoGroupAndPost move to group success');
+
+    await fbPage.waitForSelector(ID.groupComposer);
     await fbPage.click(ID.groupComposer);
-    await sleep(5000);
+    await sleep(3000);
+    await takeScreenshot(fbPage, 'public/after_click.png');
+    console.log('puppeteer gotoGroupAndPost click groupComposer success');
+
     await fbPage.waitForSelector(ID.groupComposerTextFiled);
     await fbPage.click(ID.groupComposerTextFiled);
     await fbPage.keyboard.type(message + ' '); // Types instantly. Add last space for previwing link
+    await sleep(10000); // delay for getting opengraph
     await takeScreenshot(fbPage, 'public/after_type.png');
-    await sleep(5000);
+    console.log('puppeteer gotoGroupAndPost typing contents success');
 
     if (process.env.NODE_ENV === 'development') {
       await fbPage.keyboard.press('Escape');
@@ -125,9 +132,10 @@ export async function gotoGroupAndPost(fbPage: puppeteer.Page, facebookGroupId: 
       await fbPage.keyboard.press('Escape');
     } else {
       await fbPage.click(ID.groupSendPostBtn);
+      await sleep(3000);
+      await takeScreenshot(fbPage, 'public/after_submit.png');
+      console.log('puppeteer gotoGroupAndPost submit contents success');
     }
-
-    await sleep(1000);
   } catch (e) {
     console.error(e);
     await takeScreenshot(fbPage, 'public/group_error.png');
