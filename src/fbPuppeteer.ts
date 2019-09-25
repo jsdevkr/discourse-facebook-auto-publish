@@ -4,7 +4,7 @@ import { sleep } from './helper';
 const ID = {
   login: '#m_login_email', //m.facebook login email input
   pass: '#m_login_password', //m.facebook login password input
-  loginButton: 'button[data-sigil="touchable m_login_button"]', //m.facebook login subbmit button
+  loginButton: 'button[data-sigil="touchable login_button_block m_login_button"]', //m.facebook login subbmit button
   groupComposer: 'div[role="textbox"]',
   groupComposerTextFiled: 'textarea[data-sigil="composer-textarea m-textarea-input"]',
   groupSendPostBtn: 'button[data-sigil="submit_composer"]',
@@ -64,7 +64,7 @@ export async function gotoGroupAndPost(fbPage: puppeteer.Page, facebookGroupId: 
     throw 'no facebook puppeteer page';
   }
   try {
-    await Promise.all([fbPage.waitForNavigation(), fbPage.click('button[value="확인"]')]);
+    await Promise.all([fbPage.waitForNavigation(), fbPage.click('button[value="OK"]')]);
   } catch (e) {
     console.error(e);
   }
