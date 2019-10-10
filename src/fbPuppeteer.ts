@@ -5,7 +5,7 @@ const ID = {
   login: '#m_login_email', //m.facebook login email input
   pass: '#m_login_password', //m.facebook login password input
   loginButton: 'button[data-sigil="touchable login_button_block m_login_button"]', //m.facebook login subbmit button
-  groupComposer: 'div[role="textbox"]',
+  groupComposer: '#MRoot div[role="button"]',
   groupComposerTextFiled: 'textarea[data-sigil="composer-textarea m-textarea-input"]',
   groupSendPostBtn: 'button[data-sigil="submit_composer"]',
 };
