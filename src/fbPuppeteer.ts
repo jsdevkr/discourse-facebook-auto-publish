@@ -105,6 +105,22 @@ export async function gotoGroupAndPost(fbPage: puppeteer.Page, facebookGroupId: 
     throw 'no facebook puppeteer page';
   }
 
+  const fbPageClick = async (selector: string) => {
+    try {
+      await fbPage.click(selector);
+    } catch (e) {
+      console.log('error on fbPage.click, try fbPage.evaluate');
+      await fbPage.evaluate((selector: string) => {
+        const button: HTMLButtonElement | null = document.querySelector(selector);
+        if (button) {
+          button.click();
+        } else {
+          throw 'no element found for click';
+        }
+      }, selector);
+    }
+  }
+
   await takeScreenshot(fbPage, 'public/before_group.png');
 
   if (!facebookGroupId) {
@@ -120,13 +136,13 @@ export async function gotoGroupAndPost(fbPage: puppeteer.Page, facebookGroupId: 
     console.log('puppeteer gotoGroupAndPost move to group success');
 
     await fbPage.waitForSelector(ID.groupComposer);
-    await fbPage.click(ID.groupComposer);
+    await fbPageClick(ID.groupComposer);
     await sleep(3000);
     await takeScreenshot(fbPage, 'public/after_click.png');
     console.log('puppeteer gotoGroupAndPost click groupComposer success');
 
     await fbPage.waitForSelector(ID.groupComposerTextFiled);
-    await fbPage.click(ID.groupComposerTextFiled);
+    await fbPageClick(ID.groupComposerTextFiled);
     await fbPage.keyboard.type(message + ' '); // Types instantly. Add last space for previwing link
     await sleep(10000); // delay for getting opengraph
     await takeScreenshot(fbPage, 'public/after_type.png');
@@ -137,7 +153,7 @@ export async function gotoGroupAndPost(fbPage: puppeteer.Page, facebookGroupId: 
       await fbPage.keyboard.press('Escape');
       await fbPage.keyboard.press('Escape');
     } else {
-      await fbPage.click(ID.groupSendPostBtn);
+      await fbPageClick(ID.groupSendPostBtn);
       await sleep(3000);
       await takeScreenshot(fbPage, 'public/after_submit.png');
       console.log('puppeteer gotoGroupAndPost submit contents success');
