@@ -27,6 +27,13 @@ export async function puppeteerInit(fbUserId: string, fbUserPassword: string) {
     console.log(dialog.message());
     await dialog.accept();
   });
+
+  const userAgent = await browser.userAgent();
+  const newUserAgent = userAgent.replace(/headless/gi, '');
+  await page.setUserAgent(newUserAgent);
+
+  console.log('puppeteer puppeteerInit success', newUserAgent);
+
   // login
   if (!fbUserId || !fbUserPassword) {
     throw 'now facebook account info';
