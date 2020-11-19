@@ -135,7 +135,7 @@ export default class Server {
       const eventType = req.get('X-Discourse-Event');
       console.log(`[${this.discourseUrl}]`, eventType);
       if (eventType === 'topic_created') {
-        promiseQueue.push(() => this.shareToFBGroup(req.body.topic, 30 * 1000));
+        promiseQueue.push(() => this.shareToFBGroup(req.body.topic, process.env.NODE_ENV === 'development' ? 0 : 30 * 1000));
       }
       res.json({
         id: req.body.topic.id,

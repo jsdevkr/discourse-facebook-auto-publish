@@ -90,6 +90,9 @@ async function takeScreenshot(fbPage: puppeteer.Page, path: string) {
   if (!fbPage) {
     throw 'no facebook puppeteer page';
   }
+  if (process.env.NODE_ENV === 'development') {
+    return;
+  }
   try {
     await fbPage.screenshot({ path });
   } catch (error) {
