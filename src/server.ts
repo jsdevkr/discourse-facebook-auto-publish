@@ -88,7 +88,7 @@ export default class Server {
             })
             .then(name => (name ? `[${name}] ` : ''));
 
-          const message = `[새글알림] 제목: ${displayCategoryName}${updatedTopic.title}\n글쓴이: ${topic.created_by.username} (댓글은 공유된 사이트에 남겨주세요) ${this.discourseUrl}/t/${topic.id}`;
+          const message = `[새글알림] ${displayCategoryName}${updatedTopic.title}\n글쓴이: ${topic.created_by.username} (댓글은 공유된 사이트에 남겨주세요) ${this.discourseUrl}/t/${topic.id}`;
           console.log(`[${this.discourseUrl}]`, message);
 
           if (!this.fbPage) {
